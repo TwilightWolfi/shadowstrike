@@ -25,7 +25,7 @@ public class MoreCubes : MonoBehaviour
 				tempResult /= 2;
 				tempResult *= (whateverTheheckYouWantBasically.Evaluate(x/scale2, y/scale2) + 1.25)/2;
 				if (tempResult <= rarity) {
-					Instantiate(betterCubeThanBefore, new Vector3(3*x, 3*y, 2), Quaternion.identity);
+					Instantiate(betterCubeThanBefore, new Vector3(3*x, 3*y, -1), Quaternion.identity);
 				}
 			}
 		}
