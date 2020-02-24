@@ -23,7 +23,7 @@ public class CharacterController2D : MonoBehaviour {
 
     private Vector2 velocity;
 
-    private void Awake() {      
+    private void Awake() {
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
@@ -43,8 +43,15 @@ public class CharacterController2D : MonoBehaviour {
 				
 				if (colliderDistance.distance <= 0) {
 					transform.Translate(colliderDistance.pointA - colliderDistance.pointB);
-					velocity.y = 0;
-					grounded = true;
+					Vector3 changeInPos = colliderDistance.pointA - colliderDistance.pointB;
+					Vector3 dir = changeInPos.normalized;
+					if (dir.y < 0) {
+						grounded = true;
+					}
+					dir.x = 1 - Mathf.Abs(dir.x);
+					dir.y = 1 - Mathf.Abs(dir.y);
+					velocity.x *= dir.x;
+					velocity.y *= dir.y;
 				}
 			}
         }
