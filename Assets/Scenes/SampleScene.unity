@@ -233,29 +233,35 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b376656ef69318f4d9223bd37b4fa29d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minX: 0
-  maxX: 100
-  minY: 0
-  maxY: 75
-  minWidth: 5
-  maxWidth: 30
-  minHeight: 4
-  maxHeight: 25
-  minHubWidth: 0
-  minHubHeight: 0
+  minX: 100
+  maxX: 200
+  minY: 99
+  maxY: 100
+  minWidth: 2
+  maxWidth: 25
+  minHeight: 2
+  maxHeight: 10
+  minHubWidth: 15
+  minHubHeight: 6
   spawnedBodies: []
   numRooms: 50
   roomSolver: {fileID: 7975531048817260267, guid: 2d96074e241b1c545918c00dba51e715,
+    type: 3}
+  wallTemporary: {fileID: 3911656866751278017, guid: 04829933166901adba680f80f20b8a29,
+    type: 3}
+  backgroundTemporary: {fileID: 735611642109892915, guid: 9cbd4ce5cbc49e66d8d771ff5ead4fc5,
     type: 3}
   genState: 1
   shapeWidth: 0
   shapeHeight: 0
   locationRandom: {x: 0, y: 0, z: 0}
-  sizeRandom: {x: 0, y: 0}
+  sizeRandom: {x: 0, y: 0, z: 0}
   j: 0
   roomPositions: []
   points: []
   scales: []
+  playerCharacter: {fileID: 1535505465}
+  worldScaleEnd: {x: 1, y: 1, z: 1}
 --- !u!4 &536464496
 Transform:
   m_ObjectHideFlags: 0
@@ -264,7 +270,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 536464494}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -521,7 +527,7 @@ Transform:
   m_GameObject: {fileID: 1535505463}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -33, y: -78.6, z: -1}
-  m_LocalScale: {x: 10, y: 10, z: 1}
+  m_LocalScale: {x: 5, y: 5, z: 1}
   m_Children:
   - {fileID: 534669905}
   - {fileID: 1425866948}
@@ -544,7 +550,7 @@ MonoBehaviour:
   walkAcceleration: 75
   airAcceleration: 30
   groundDeceleration: 70
-  jumpHeight: 7
+  jumpHeight: 5
 --- !u!61 &1535505467
 BoxCollider2D:
   m_ObjectHideFlags: 0

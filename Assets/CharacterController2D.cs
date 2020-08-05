@@ -27,6 +27,10 @@ public class CharacterController2D : MonoBehaviour {
         boxCollider = GetComponent<BoxCollider2D>();
     }
 
+    public void SetVelocity(Vector2 velocity) {
+        this.velocity = velocity;
+    }
+
 	private void Update() {
 		
 		grounded = false;
@@ -56,7 +60,8 @@ public class CharacterController2D : MonoBehaviour {
 			}
         }
 		
-		if (Input.GetButtonDown("Jump")) {
+		if (Input.GetButtonDown("Jump") || (Input.GetButtonDown("Vertical") && Input.GetAxis("Vertical") > 0)) {
+                print("Jumped");
                 velocity.y = Mathf.Sqrt(2 * jumpHeight * Mathf.Abs(Physics2D.gravity.y));
             }
 		
