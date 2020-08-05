@@ -16,7 +16,7 @@ public class WorldStructureLoad : MonoBehaviour
 	public float shapeWidth;
 	public float shapeHeight;
 	public Vector3 locationRandom;
-	public Vector2 sizeRandom;
+	public Vector3 sizeRandom;
 	public int j = 0;
 	public List<Vector3> roomPositions = new List<Vector3>();
 	public List<Vector2> points;
@@ -37,7 +37,7 @@ public class WorldStructureLoad : MonoBehaviour
 			shapeHeight += shapeHeight%2;
 			
 			locationRandom = new Vector3(Mathf.Round(Random.Range(minX,maxX)), Mathf.Round(Random.Range(minY,maxY)), -1);
-			sizeRandom = new Vector2(shapeWidth, shapeHeight);
+			sizeRandom = new Vector3(shapeWidth, shapeHeight, 1);
 			GameObject spawned = (GameObject)Instantiate(roomSolver, locationRandom, Quaternion.identity);
 			spawned.transform.localScale = sizeRandom;
 			
@@ -74,6 +74,7 @@ public class WorldStructureLoad : MonoBehaviour
 						Vector3 position = new Vector3(Mathf.Round(rb.transform.position.x), Mathf.Round(rb.transform.position.y), -1);
 						roomPositions.Add(position);
 						scales.Add(rb.transform.localScale);
+				    rb.GetComponent<MeshRenderer>().material.color = new Color(0.1f, 0.1f, 0.1f);
 						if (rb.transform.localScale.x > 20 && rb.transform.localScale.y > 15)
 						{
 							hubRoomIndexes.Add(j);
@@ -95,6 +96,7 @@ public class WorldStructureLoad : MonoBehaviour
 			{
 				Vector3 vec = roomPositions[index];
 				print("Hub Location: (" + vec.x + ", " + vec.y + ")");
+				spawnedBodies[index].GetComponent<MeshRenderer>().material.color = new Color(Random.Range(0f, 0.5f), Random.Range(0f, 0.5f), Random.Range(0f, 0.5f));
 				pointList.Add(new Point(vec.x, vec.y));
 			}
 			
@@ -119,7 +121,7 @@ public class WorldStructureLoad : MonoBehaviour
 	{
 		if(triangulator == null)
 		{
-			triangulator = new DelaunayTriangulator((double)maxX, (double)maxY);
+			triangulator = new DelaunayTriangulator((double)maxX*100, (double)maxY*100);
 		}
 		
 		return new List<Triangle>(triangulator.BowyerWatson(pointList));
@@ -156,7 +158,7 @@ public class WorldStructureLoad : MonoBehaviour
 	{
 		foreach(Edge edge in edges)
 		{
-			Debug.DrawLine(new Vector3((float)edge.point1.x, (float)edge.point1.y, 0), new Vector3((float)edge.point2.x, (float)edge.point2.y, 0), Color.white, 100f);
+			Debug.DrawLine(new Vector3((float)edge.point1.x, (float)edge.point1.y, -5), new Vector3((float)edge.point2.x, (float)edge.point2.y, -5), new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)), 100f);
 			
 			print("Edge: (" + edge.point1.x + ", " + edge.point1.y + ") to (" + edge.point2.x + ", " + edge.point2.y + ")");
 		}

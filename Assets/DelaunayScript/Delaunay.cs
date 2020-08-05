@@ -59,7 +59,23 @@ namespace DelaunayVoronoi
             }
             //triangulation.Remove(border[0]);
 			//triangulation.Remove(border[1]); //since the border is necessary for calculations or some shit *WHY NOT JUST DO AWAY WITH IT AFTER CALCULATIONS ARE DONE **WHAT WAS I THINKING***
-            return triangulation;
+            List<Triangle> triangulation_butnotfucked = new List<Triangle>();
+            foreach(Triangle itsprobablyfucked in triangulation)
+            {
+                bool comparisonResult = true;
+                for(int i = 0; i<itsprobablyfucked.Vertices.Length; i++)
+                {
+                    if(itsprobablyfucked.Vertices[i] == point0 || itsprobablyfucked.Vertices[i] == point1 || itsprobablyfucked.Vertices[i] == point2 || itsprobablyfucked.Vertices[i] == point3)
+                    {
+                        comparisonResult = false;
+                    }
+                }
+                if(comparisonResult)
+                {
+                    triangulation_butnotfucked.Add(itsprobablyfucked);
+                }
+            }
+            return triangulation_butnotfucked;
         }
 
         private List<Edge> FindHoleBoundaries(ISet<Triangle> badTriangles)
