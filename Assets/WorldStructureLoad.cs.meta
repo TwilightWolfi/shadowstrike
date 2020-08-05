@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: b376656ef69318f4d9223bd37b4fa29d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - roomSolver: {fileID: 7975531048817260267, guid: 2d96074e241b1c545918c00dba51e715,
+      type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
