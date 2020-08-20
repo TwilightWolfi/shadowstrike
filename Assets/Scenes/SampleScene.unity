@@ -237,11 +237,11 @@ MonoBehaviour:
   maxX: 200
   minY: 99
   maxY: 100
-  minWidth: 2
+  minWidth: 9
   maxWidth: 25
-  minHeight: 2
+  minHeight: 4
   maxHeight: 10
-  minHubWidth: 15
+  minHubWidth: 20
   minHubHeight: 6
   spawnedBodies: []
   numRooms: 50

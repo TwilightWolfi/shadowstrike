@@ -114,14 +114,60 @@ public class WorldStructureLoad : MonoBehaviour
 				List<int> indexesToSpare = new List<int>();
 			foreach(Edge edge in edges)
 			{
-				Vector2 dir = new Vector2((float)edge.point2.x - (float)edge.point1.x, (float)edge.point2.y - (float)edge.point1.y);
+				//==VERTICAL HALL BEGIN==
+				float ud = (float)edge.point2.y - (float)edge.point1.y;
+				/*if(ud > 0)
+					ud = 1;
+				else if(ud < 0)
+					ud = -1;
+				else
+					ud = 0;*/
+				Vector2 dir = new Vector2(0, ud);
 				float dist = dir.magnitude;
 				dir.Normalize();
-				Vector2 origin = new Vector3((float)edge.point1.x, (float)edge.point1.y);
+				Vector2 origin = new Vector3((float)edge.point2.x, (float)edge.point1.y);
+				Color lineCol = new Color(Random.Range(0.5f, 1f), Random.Range(0.5f, 1f), Random.Range(0.5f, 1f));
+				Debug.DrawLine(origin, origin + (dir*dist), lineCol, 100f);
 				//Ray ray = new Ray(new Vector3((float)edge.point1.x, (float)edge.point1.y, -1), dir);
 				print("Firing ray from: "+origin+" on direction "+dir+" with length "+dist);
 				print("Position comparison: "+origin+" to "+(origin+(dir*dist))+" vs "+edge.point1.x+","+edge.point1.y+" to "+edge.point2.x+","+edge.point2.y);
 				RaycastHit2D[] hits = Physics2D.RaycastAll(origin, dir, dist);
+				print("Hit #: "+hits.Length);
+				print("Index list set up");
+				for(int i = 0; i<hits.Length; i++)
+				{
+					print("hit: "+hits[i].collider.name);
+					if(hits[i].collider.GetComponent<Rigidbody2D>() != null)
+					{
+						Rigidbody2D rb = hits[i].collider.GetComponent<Rigidbody2D>();
+						if(spawnedBodies.Contains(rb))
+						{
+							int index = spawnedBodies.IndexOf(rb);
+							if(!indexesToSpare.Contains(index))
+							{
+								indexesToSpare.Add(index);
+							}
+						}
+					}
+				}
+				//==VERTICAL HALL BEGIN==
+				ud = (float)edge.point2.x - (float)edge.point1.x;
+				/*if(ud > 0)
+					ud = 1;
+				else if(ud < 0)
+					ud = -1;
+				else
+					ud = 0;*/
+				dir = new Vector2(ud, 0);
+				dist = dir.magnitude;
+				dir.Normalize();
+				origin = new Vector3((float)edge.point1.x, (float)edge.point1.y);
+				Debug.DrawLine(origin, origin + (dir*dist), lineCol, 100f);
+				//Debug.DrawLine(new Vector3((float)edge.point1.x, (float)edge.point1.y, 0), new Vector3((float)edge.point2.x, (float)edge.point2.y, 0), lineCol, 10f);
+				//Ray ray = new Ray(new Vector3((float)edge.point1.x, (float)edge.point1.y, -1), dir);
+				print("Firing ray from: "+origin+" on direction "+dir+" with length "+dist);
+				print("Position comparison: "+origin+" to "+(origin+(dir*dist))+" vs "+edge.point1.x+","+edge.point1.y+" to "+edge.point2.x+","+edge.point2.y);
+				hits = Physics2D.RaycastAll(origin, dir, dist);
 				print("Hit #: "+hits.Length);
 				print("Index list set up");
 				for(int i = 0; i<hits.Length; i++)
@@ -145,7 +191,8 @@ public class WorldStructureLoad : MonoBehaviour
 				{
 					if(indexesToSpare.Contains(i) == false)
 					{
-						spawnedBodies[i].gameObject.SetActive(false);
+						//spawnedBodies[i].gameObject.SetActive(false);
+						spawnedBodies[i].GetComponent<Collider2D>().enabled = false;
 					}
 				}
 			genState = worldGenState.Rooms;
@@ -156,7 +203,7 @@ public class WorldStructureLoad : MonoBehaviour
 			for(int i = 0; i<spawnedBodies.Count; i++)
 			{
 				Rigidbody2D rb = spawnedBodies[i];
-				if(rb.gameObject.activeSelf)
+				if(rb.GetComponent<Collider2D>().enabled)
 				{
 					Color rbCol = rb.GetComponent<MeshRenderer>().material.color;
 					Vector2 position = new Vector2(Mathf.Round(rb.transform.position.x), Mathf.Round(rb.transform.position.y));
@@ -179,23 +226,23 @@ public class WorldStructureLoad : MonoBehaviour
 					{
 						//if(!Physics2D.Raycast(new Vector2(position.x - (scale.x/2), position.y + y), Vector2.down, 0.25f))
 						{
-							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x - (scale.x/2), position.y + y, 0), Quaternion.identity, transform);
+							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x - (scale.x/2) - 1, position.y + y, 0), Quaternion.identity, transform);
 							go.GetComponent<MeshRenderer>().material.color = rbCol;
 						}
 						//if(!Physics2D.Raycast(new Vector2(position.x + (scale.x/2), position.y + y), Vector2.down, 0.25f))
 						{
-							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x + (scale.x/2), position.y + y, 0), Quaternion.identity, transform);
+							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x + (scale.x/2) + 1, position.y + y, 0), Quaternion.identity, transform);
 							go.GetComponent<MeshRenderer>().material.color = rbCol;
 						}
 					}
 					for(int x = ((int)(-scale.x/2))-1; x<=scale.x/2; x++)
 					{
-						for(int y = ((int)(-scale.y/2))-1; y<=scale.y/2; y++)
+						for(int y = ((int)(-scale.y/2))-1; y<scale.y/2; y++)
 						{
 							//if(!Physics2D.Raycast(new Vector2(position.x + x, position.y - (scale.y/2)), Vector2.down, 0.25f))
 							{
-								go = (GameObject)Instantiate(backgroundTemporary, new Vector3(position.x + x, position.y - (scale.y/2), 1), Quaternion.identity, transform);
-								go.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = rbCol;
+								go = (GameObject)Instantiate(backgroundTemporary, new Vector3(position.x + x, position.y + y, 1), Quaternion.identity, transform);
+								go.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(rbCol.r * 0.125f, rbCol.g * 0.125f, rbCol.b * 0.125f, 1);
 							}
 						}
 					}
@@ -204,14 +251,29 @@ public class WorldStructureLoad : MonoBehaviour
 			}
 			foreach(Edge edge in edges)
 			{
-				Vector2 dir = new Vector2((float)edge.point2.x - (float)edge.point1.x, (float)edge.point2.y - (float)edge.point1.y);
+				Vector2 dir = new Vector2(0, (float)edge.point2.y - (float)edge.point1.y);
 				float dist = dir.magnitude;
 				dir.Normalize();
-				Vector2 origin = new Vector3((float)edge.point1.x, (float)edge.point1.y);
+				Vector2 origin = new Vector3((float)edge.point2.x, (float)edge.point1.y);
 				//Ray ray = new Ray(new Vector3((float)edge.point1.x, (float)edge.point1.y, -1), dir);
 				print("Firing ray from: "+origin+" on direction "+dir+" with length "+dist);
 				print("Position comparison: "+origin+" to "+(origin+(dir*dist))+" vs "+edge.point1.x+","+edge.point1.y+" to "+edge.point2.x+","+edge.point2.y);
 				RaycastHit2D[] hits = Physics2D.RaycastAll(origin, dir, dist);
+				print("Hit #: "+hits.Length);
+				print("Index list set up");
+				for(int i = 0; i<hits.Length; i++)
+				{
+					print("hit: "+hits[i].collider.name);
+					Destroy(hits[i].collider.gameObject);
+				}
+				dir = new Vector2((float)edge.point2.x - (float)edge.point1.x, 0);
+				dist = dir.magnitude;
+				dir.Normalize();
+				origin = new Vector3((float)edge.point1.x, (float)edge.point1.y);
+				//Ray ray = new Ray(new Vector3((float)edge.point1.x, (float)edge.point1.y, -1), dir);
+				print("Firing ray from: "+origin+" on direction "+dir+" with length "+dist);
+				print("Position comparison: "+origin+" to "+(origin+(dir*dist))+" vs "+edge.point1.x+","+edge.point1.y+" to "+edge.point2.x+","+edge.point2.y);
+				hits = Physics2D.RaycastAll(origin, dir, dist);
 				print("Hit #: "+hits.Length);
 				print("Index list set up");
 				for(int i = 0; i<hits.Length; i++)
@@ -230,7 +292,7 @@ public class WorldStructureLoad : MonoBehaviour
 			int numBodies = 0;
 			foreach(Rigidbody2D rb in spawnedBodies)
 			{
-				if(rb.gameObject.activeSelf)
+				if(rb.GetComponent<Collider2D>().enabled)
 				{
 					offset = offset + rb.transform.position;
 					numBodies += 1;
@@ -292,9 +354,10 @@ public class WorldStructureLoad : MonoBehaviour
 	
 	public void DrawEdges(List<Edge> edges)
 	{
+		return;
 		foreach(Edge edge in edges)
 		{
-			Debug.DrawLine(new Vector3((float)edge.point1.x, (float)edge.point1.y, 0), new Vector3((float)edge.point2.x, (float)edge.point2.y, 0), new Color(Random.Range(0f, 1f), Random.Range(0f, 1f), Random.Range(0f, 1f)), 100f);
+			Debug.DrawLine(new Vector3((float)edge.point1.x, (float)edge.point1.y, 0), new Vector3((float)edge.point2.x, (float)edge.point2.y, 0), new Color(Random.Range(0f, 0.5f), Random.Range(0f, 0.5f), Random.Range(0f, 0.5f)), 10f);
 			
 			print("Edge: (" + edge.point1.x + ", " + edge.point1.y + ") to (" + edge.point2.x + ", " + edge.point2.y + ")");
 		}
