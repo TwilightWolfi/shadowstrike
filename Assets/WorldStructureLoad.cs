@@ -28,6 +28,7 @@ public class WorldStructureLoad : MonoBehaviour
 	public Transform playerCharacter;
 	//scale up the world once generation is over
 	public Vector3 worldScaleEnd = new Vector3(5, 5, 5);
+	public List<Collider2D> theFuckingBrokenBackgroundCollidersWhatTheFuckUnity;
 	
     // Start is called before the first frame update
     void Start()
@@ -48,6 +49,8 @@ public class WorldStructureLoad : MonoBehaviour
 			oldPos.Add(spawned.transform.position);
 		}
     }
+
+		public LayerMask maskIgnoreBG;
 
     // Update is called once per frame
     void FixedUpdate()
@@ -191,9 +194,9 @@ public class WorldStructureLoad : MonoBehaviour
 				{
 					if(indexesToSpare.Contains(i) == false)
 					{
-						//spawnedBodies[i].gameObject.SetActive(false);
 						spawnedBodies[i].GetComponent<Collider2D>().enabled = false;
 					}
+						spawnedBodies[i].gameObject.SetActive(false);
 				}
 			genState = worldGenState.Rooms;
 		}
@@ -211,12 +214,12 @@ public class WorldStructureLoad : MonoBehaviour
 					GameObject go = null;
 					for(int x = ((int)(-scale.x/2))-1; x<=scale.x/2; x++)
 					{
-						//if(!Physics2D.Raycast(new Vector2(position.x + x, position.y - (scale.y/2)), Vector2.down, 0.25f))
+						if(!Physics2D.Raycast(new Vector2(position.x + x, position.y - (scale.y/2)), Vector2.down, 0.25f))
 						{
 							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x + x, position.y - (scale.y/2), 0), Quaternion.identity, transform);
 							go.GetComponent<MeshRenderer>().material.color = rbCol;
 						}
-						//if(!Physics2D.Raycast(new Vector2(position.x + x, position.y + (scale.y/2)), Vector2.down, 0.25f))
+						if(!Physics2D.Raycast(new Vector2(position.x + x, position.y + (scale.y/2)), Vector2.down, 0.25f))
 						{
 							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x + x, position.y + (scale.y/2), 0), Quaternion.identity, transform);
 							go.GetComponent<MeshRenderer>().material.color = rbCol;
@@ -224,25 +227,26 @@ public class WorldStructureLoad : MonoBehaviour
 					}
 					for(int y = ((int)(-scale.y/2)); y<=scale.y/2; y++)
 					{
-						//if(!Physics2D.Raycast(new Vector2(position.x - (scale.x/2), position.y + y), Vector2.down, 0.25f))
+						if(!Physics2D.Raycast(new Vector2(position.x - (scale.x/2), position.y + y), Vector2.down, 0.25f))
 						{
 							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x - (scale.x/2) - 1, position.y + y, 0), Quaternion.identity, transform);
 							go.GetComponent<MeshRenderer>().material.color = rbCol;
 						}
-						//if(!Physics2D.Raycast(new Vector2(position.x + (scale.x/2), position.y + y), Vector2.down, 0.25f))
+						if(!Physics2D.Raycast(new Vector2(position.x + (scale.x/2), position.y + y), Vector2.down, 0.25f))
 						{
 							go = (GameObject)Instantiate(wallTemporary, new Vector3(position.x + (scale.x/2) + 1, position.y + y, 0), Quaternion.identity, transform);
 							go.GetComponent<MeshRenderer>().material.color = rbCol;
 						}
 					}
-					for(int x = ((int)(-scale.x/2))-1; x<=scale.x/2; x++)
+					for(int x = ((int)(-scale.x/2))-1; x<=(scale.x/2)+1; x++)
 					{
-						for(int y = ((int)(-scale.y/2))-1; y<scale.y/2; y++)
+						for(int y = ((int)(-scale.y/2)); y<=scale.y/2; y++)
 						{
 							//if(!Physics2D.Raycast(new Vector2(position.x + x, position.y - (scale.y/2)), Vector2.down, 0.25f))
 							{
 								go = (GameObject)Instantiate(backgroundTemporary, new Vector3(position.x + x, position.y + y, 1), Quaternion.identity, transform);
 								go.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(rbCol.r * 0.125f, rbCol.g * 0.125f, rbCol.b * 0.125f, 1);
+								theFuckingBrokenBackgroundCollidersWhatTheFuckUnity.Add(go.GetComponent<Collider2D>());
 							}
 						}
 					}
@@ -251,6 +255,41 @@ public class WorldStructureLoad : MonoBehaviour
 			}
 			foreach(Edge edge in edges)
 			{
+				//==BEGIN CODE FOR SPAWNING HALLWAYS==
+				//--VERTICAL HALLWAY==
+				float ydist = (float)edge.point2.y - (float)edge.point1.y;
+				float xdist = (float)edge.point2.x - (float)edge.point1.x;
+				GameObject go;
+				for(int x = -1; x<=1; x++)
+				{
+					for(int y = 0; y<=Mathf.Abs(ydist); y++)
+					{
+						if(!Physics2D.Raycast(new Vector2((float)edge.point2.x+x, (float)edge.point1.y+(ydist > 0 ? y : -y)), Vector2.down, 0.25f))
+						{
+							Instantiate(wallTemporary, new Vector3((float)edge.point2.x+x, (float)edge.point1.y+(ydist > 0 ? y : -y), 0), Quaternion.identity, transform);
+							go = (GameObject)Instantiate(backgroundTemporary, new Vector3((float)edge.point2.x+x, (float)edge.point1.y+(ydist > 0 ? y : -y), 1), Quaternion.identity, transform);
+							go.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(0.125f, 0.125f, 0.125f, 1);
+							theFuckingBrokenBackgroundCollidersWhatTheFuckUnity.Add(go.GetComponent<Collider2D>());
+						}
+					}
+				}
+				for(int x = 0; x<=Mathf.Abs(xdist); x++)
+				{
+					for(int y = -1; y<=1; y++)
+					{
+						if(!Physics2D.Raycast(new Vector2((float)edge.point1.x+(xdist > 0 ? x : -x), (float)edge.point1.y+y), Vector2.down, 0.25f))
+						{
+							Instantiate(wallTemporary, new Vector3((float)edge.point1.x+(xdist > 0 ? x : -x), (float)edge.point1.y+y, 0), Quaternion.identity, transform);
+							go = (GameObject)Instantiate(backgroundTemporary, new Vector3((float)edge.point1.x+(xdist > 0 ? x : -x), (float)edge.point1.y+y, 1), Quaternion.identity, transform);
+							go.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(0.125f, 0.125f, 0.125f, 1);
+							theFuckingBrokenBackgroundCollidersWhatTheFuckUnity.Add(go.GetComponent<Collider2D>());
+						}
+					}
+				}
+			}
+			foreach(Edge edge in edges)
+			{
+				//==BEGIN CODE FOR POKING HOLES IN==
 				Vector2 dir = new Vector2(0, (float)edge.point2.y - (float)edge.point1.y);
 				float dist = dir.magnitude;
 				dir.Normalize();
@@ -258,7 +297,7 @@ public class WorldStructureLoad : MonoBehaviour
 				//Ray ray = new Ray(new Vector3((float)edge.point1.x, (float)edge.point1.y, -1), dir);
 				print("Firing ray from: "+origin+" on direction "+dir+" with length "+dist);
 				print("Position comparison: "+origin+" to "+(origin+(dir*dist))+" vs "+edge.point1.x+","+edge.point1.y+" to "+edge.point2.x+","+edge.point2.y);
-				RaycastHit2D[] hits = Physics2D.RaycastAll(origin, dir, dist);
+				RaycastHit2D[] hits = Physics2D.RaycastAll(origin, dir, dist, maskIgnoreBG);
 				print("Hit #: "+hits.Length);
 				print("Index list set up");
 				for(int i = 0; i<hits.Length; i++)
@@ -273,7 +312,7 @@ public class WorldStructureLoad : MonoBehaviour
 				//Ray ray = new Ray(new Vector3((float)edge.point1.x, (float)edge.point1.y, -1), dir);
 				print("Firing ray from: "+origin+" on direction "+dir+" with length "+dist);
 				print("Position comparison: "+origin+" to "+(origin+(dir*dist))+" vs "+edge.point1.x+","+edge.point1.y+" to "+edge.point2.x+","+edge.point2.y);
-				hits = Physics2D.RaycastAll(origin, dir, dist);
+				hits = Physics2D.RaycastAll(origin, dir, dist, maskIgnoreBG);
 				print("Hit #: "+hits.Length);
 				print("Index list set up");
 				for(int i = 0; i<hits.Length; i++)
@@ -296,8 +335,12 @@ public class WorldStructureLoad : MonoBehaviour
 				{
 					offset = offset + rb.transform.position;
 					numBodies += 1;
-					rb.gameObject.SetActive(false);
 				}
+					rb.gameObject.SetActive(false);
+			}
+			foreach(Collider2D fuckingCollider in theFuckingBrokenBackgroundCollidersWhatTheFuckUnity)
+			{
+				Destroy(fuckingCollider);
 			}
 			offset /= numBodies;
 			offset = new Vector3(offset.x * worldScaleEnd.x, offset.y * worldScaleEnd.y, offset.z * worldScaleEnd.z);

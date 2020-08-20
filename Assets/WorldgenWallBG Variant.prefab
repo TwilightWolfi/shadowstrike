@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 24208058}
   - component: {fileID: 24208060}
   - component: {fileID: 24208059}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: GameObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -144,12 +144,21 @@ PrefabInstance:
     - target: {fileID: 3911656866751278017, guid: 04829933166901adba680f80f20b8a29,
         type: 3}
       propertyPath: m_Name
-      value: WorldgenWallBG
+      value: WorldgenWallBG Variant
+      objectReference: {fileID: 0}
+    - target: {fileID: 3911656866751278017, guid: 04829933166901adba680f80f20b8a29,
+        type: 3}
+      propertyPath: m_Layer
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5419096080097227988, guid: 04829933166901adba680f80f20b8a29,
+        type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 2376713404534099074, guid: 04829933166901adba680f80f20b8a29, type: 3}
     - {fileID: 4332473805339419549, guid: 04829933166901adba680f80f20b8a29, type: 3}
-    - {fileID: 5419096080097227988, guid: 04829933166901adba680f80f20b8a29, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 04829933166901adba680f80f20b8a29, type: 3}
 --- !u!4 &1173130529479618215 stripped
 Transform:
